@@ -15,25 +15,30 @@ export default function Register() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Email</label>
-        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required className="mt-1 w-full border rounded p-2" />
+    <section className="max-w-6xl mx-auto px-4 py-8">
+      <div className="bg-white border rounded-lg p-6 max-w-md mx-auto">
+        <h1 className="text-xl font-semibold text-gray-900 mb-4">Create Account</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required className="mt-1 w-full border rounded p-2" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required className="mt-1 w-full border rounded p-2" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Role</label>
+            <select value={role} onChange={(e) => setRole(e.target.value)} className="mt-1 w-full border rounded p-2">
+              <option value="student">Student</option>
+              <option value="teacher">Teacher</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <button type="submit" className="inline-flex items-center rounded-md bg-purple-600 text-white px-4 py-2">Create</button>
+          {message && <div className="text-sm text-gray-600">{message}</div>}
+        </form>
       </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Password</label>
-        <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required className="mt-1 w-full border rounded p-2" />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Role</label>
-        <select value={role} onChange={(e) => setRole(e.target.value)} className="mt-1 w-full border rounded p-2">
-          <option value="student">Student</option>
-          <option value="teacher">Teacher</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
-      <button type="submit" className="inline-flex items-center rounded-md bg-purple-600 text-white px-4 py-2">Create</button>
-      {message && <div className="text-sm text-gray-600">{message}</div>}
-    </form>
+    </section>
   )
 }
