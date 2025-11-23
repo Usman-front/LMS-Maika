@@ -16,6 +16,8 @@
       .course-form-constrained{max-width:56rem;margin:0 auto}
       .course-card-constrained{max-width:56rem;margin:0 auto}
       .editor-large{min-height:420px}
+      .delete-btn{cursor:pointer;background:#ef4444;color:#fff;border:none;padding:0.3rem 0.6rem;border-radius:0.375rem;font-size:0.75rem;margin-left:0.5rem}
+      .delete-btn:hover{background:#dc2626}
     </style>
   </head>
   <body>
@@ -25,6 +27,38 @@
         function isCoursesPage(){
           var input=document.querySelector('input[placeholder="New course title"]');
           return !!input;
+        }
+        function getSection(){
+          var p=(location.pathname||'/').toLowerCase();
+          if(p.includes('/courses')) return 'courses';
+          if(p.includes('/assignments')) return 'assignments';
+          if(p.includes('/gradebook')) return 'gradebook';
+          if(p.includes('/announcements')) return 'announcements';
+          if(p.includes('/submissions')) return 'submissions';
+          return 'unknown';
+        }
+        function isAdmin(){
+          var txt=document.body.textContent||'';
+          return /\(admin\)/i.test(txt);
+        }
+        function loadDeletes(section){
+          try{ return JSON.parse(localStorage.getItem('deletes:'+section)||'[]'); }catch(e){ return []; }
+        }
+        function saveDeletes(section,list){
+          try{ localStorage.setItem('deletes:'+section, JSON.stringify(list||[])); }catch(e){}
+        }
+        function addDeleteButton(card,title,section){
+          if(!isAdmin()) return;
+          var btn=document.createElement('button');
+          btn.className='delete-btn';
+          btn.textContent='Delete';
+          btn.addEventListener('click',function(e){
+            e.preventDefault();
+            var list=loadDeletes(section);
+            if(title && list.indexOf(title)===-1){ list.push(title); saveDeletes(section,list); }
+            card.remove();
+          });
+          var first=card.firstChild; card.insertBefore(btn, first?first.nextSibling:null);
         }
         function findHeading(el){
           return el.querySelector('h1, h2, h3, strong, b');
@@ -88,6 +122,7 @@
           while(card.firstChild){ card.removeChild(card.firstChild); }
           card.appendChild(titleBar);
           card.appendChild(btn);
+          addDeleteButton(card,titleText,'courses');
           card.appendChild(contentDiv);
           if(!btn.getAttribute('data-bound')){
             btn.setAttribute('data-bound','1');
@@ -118,9 +153,25 @@
             }
           }
           courseCards().forEach(function(card){
+            var head=findHeading(card); var title=(head&&head.textContent||'').trim();
+            var deleted=loadDeletes('courses');
+            if(title && deleted.indexOf(title)!==-1){ card.remove(); return; }
             if(!card.classList.contains('course-card-constrained')){
               card.classList.add('course-card-constrained');
             }
+          });
+        }
+        function injectDeleteButtonsForOtherSections(){
+          var section=getSection();
+          if(section==='courses') return; // handled elsewhere
+          if(!isAdmin()) return;
+          var root=document.getElementById('root'); if(!root) return;
+          var cards=[].slice.call(root.querySelectorAll('div')).filter(function(d){ return findHeading(d); });
+          var deleted=loadDeletes(section);
+          cards.forEach(function(card){
+            var head=findHeading(card); var title=(head&&head.textContent||'').trim();
+            if(title && deleted.indexOf(title)!==-1){ card.remove(); return; }
+            addDeleteButton(card,title,section);
           });
         }
         function enhanceEditors(){
@@ -155,10 +206,10 @@
         }
         var root=document.getElementById('root');
         if(root){
-          var mo=new MutationObserver(function(){ensureCourses();});
+          var mo=new MutationObserver(function(){ensureCourses();injectDeleteButtonsForOtherSections();});
           mo.observe(root,{childList:true,subtree:true});
         }
-        window.addEventListener('load',function(){ensureCourses();});
+        window.addEventListener('load',function(){ensureCourses();injectDeleteButtonsForOtherSections();});
       })();
     </script>
   </body>
