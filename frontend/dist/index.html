@@ -12,6 +12,7 @@
       .open-injected{cursor:pointer;background:var(--color-purple-700,#6b21a8);color:#fff;border:none;padding:0.35rem 0.7rem;border-radius:0.375rem;font-size:0.875rem}
       .open-injected:hover{background:var(--color-purple-800,#581c87)}
       [data-course-content]{white-space:pre-wrap}
+      .course-title{font-weight:600;font-size:var(--text-xl,1.25rem);margin-bottom:0.5rem}
       .nav-link{transition:color .15s ease}
       .nav-link.active{color:var(--color-purple-700,#6b21a8);text-decoration:none;border-bottom:2px solid var(--color-purple-700,#6b21a8)}
     </style>
@@ -73,6 +74,41 @@
         }
         function processCourses(){
           if(!isCoursesPage()) return;
+          var root=document.getElementById('root');
+          if(!root) return;
+          var openButtons=[].slice.call(root.querySelectorAll('button, a')).filter(function(b){
+            var t=(b.textContent||'').trim().toLowerCase();
+            return t==='open';
+          });
+          openButtons.forEach(function(btn){
+            var container=btn.closest('div')||btn.parentElement;
+            if(!container) return;
+            var longest=null; var longestLen=0;
+            [].slice.call(container.querySelectorAll('div, p, pre')).forEach(function(el){
+              var len=(el.textContent||'').trim().length;
+              if(len>longestLen){ longest=el; longestLen=len; }
+            });
+            var contentEl=longest; if(!contentEl) return;
+            if(contentEl.getAttribute('data-course-content')) return;
+            var txt=(contentEl.textContent||'').trim();
+            var title=txt.split(/\n|\r/)[0].replace(/^\W+/,'').trim();
+            var titleBar=document.createElement('div');
+            titleBar.className='course-title';
+            titleBar.textContent=title||'Course';
+            container.insertBefore(titleBar, contentEl);
+            contentEl.setAttribute('data-course-content','1');
+            contentEl.style.display='none';
+            contentEl.style.whiteSpace='pre-wrap';
+            if(!btn.getAttribute('data-bound')){
+              btn.setAttribute('data-bound','1');
+              btn.addEventListener('click',function(e){
+                e.preventDefault();
+                contentEl.style.display='';
+                btn.style.display='none';
+                titleBar.remove();
+              });
+            }
+          });
           courseCards().forEach(hideContent);
         }
         function enhanceNav(){
