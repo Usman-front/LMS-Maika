@@ -6,8 +6,99 @@
     <title>SamrtLearn</title>
     <script type="module" crossorigin src="/assets/index-BU1Bvb4D.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-D2QgOjtK.css">
+    <style>
+      body{max-width:1200px;margin:0 auto}
+      #root>div{max-width:var(--container-6xl,72rem);margin:0 auto;padding:0 var(--spacing,.25rem)}
+      .open-injected{cursor:pointer;background:var(--color-purple-700,#6b21a8);color:#fff;border:none;padding:0.35rem 0.7rem;border-radius:0.375rem;font-size:0.875rem}
+      .open-injected:hover{background:var(--color-purple-800,#581c87)}
+      [data-course-content]{white-space:pre-wrap}
+      .nav-link{transition:color .15s ease}
+      .nav-link.active{color:var(--color-purple-700,#6b21a8);text-decoration:none;border-bottom:2px solid var(--color-purple-700,#6b21a8)}
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      (function(){
+        function isCoursesPage(){
+          var input=document.querySelector('input[placeholder="New course title"]');
+          return !!input;
+        }
+        function findHeading(el){
+          return el.querySelector('h1, h2, h3, strong, b');
+        }
+        function normalizeText(t){
+          return (t||'').replace(/\s+/g,' ').trim();
+        }
+        function courseCards(){
+          var root=document.getElementById('root');
+          if(!root) return [];
+          var blocks=[].slice.call(root.querySelectorAll('div'));
+          return blocks.filter(function(card){
+            var head=findHeading(card);
+            if(!head) return false;
+            var txt=normalizeText(card.textContent||'');
+            return txt.length>200;
+          });
+        }
+        function hideContent(card){
+          var head=findHeading(card);
+          if(!head) return;
+          var btn=[].slice.call(card.querySelectorAll('button, a')).find(function(b){
+            return normalizeText(b.textContent).toLowerCase()==='open';
+          });
+          var children=[].slice.call(card.children);
+          children.forEach(function(ch){
+            if(ch===head||ch===btn) return;
+            ch.setAttribute('data-course-content','1');
+            ch.style.display='none';
+            ch.style.whiteSpace='pre-wrap';
+          });
+          if(!btn){
+            btn=document.createElement('button');
+            btn.textContent='Open';
+            btn.className='open-injected';
+            head.parentElement.insertBefore(btn, head.nextSibling);
+          }
+          if(!btn.getAttribute('data-bound')){
+            btn.setAttribute('data-bound','1');
+            btn.addEventListener('click',function(e){
+              e.preventDefault();
+              [].slice.call(card.querySelectorAll('[data-course-content]')).forEach(function(el){
+                el.style.display='';
+              });
+              btn.style.display='none';
+            });
+          }
+        }
+        function processCourses(){
+          if(!isCoursesPage()) return;
+          courseCards().forEach(hideContent);
+        }
+        function enhanceNav(){
+          var links=document.querySelectorAll('nav a, header a, .topbar a');
+          if(!links.length) return;
+          links.forEach(function(a){ a.classList.add('nav-link'); });
+          function setActive(el){
+            links.forEach(function(x){ x.classList.remove('active'); });
+            el.classList.add('active');
+          }
+          links.forEach(function(a){
+            a.addEventListener('click',function(){ setActive(a); });
+          });
+          var current=[].slice.call(links).find(function(a){
+            var href=(a.getAttribute('href')||'');
+            return href && location.pathname.indexOf(href)>-1;
+          }) || links[0];
+          if(current) current.classList.add('active');
+        }
+        var root=document.getElementById('root');
+        if(root){
+          var mo=new MutationObserver(function(){processCourses();enhanceNav();});
+          mo.observe(root,{childList:true,subtree:true});
+        }
+        window.addEventListener('load',function(){processCourses();enhanceNav();});
+      })();
+    </script>
   </body>
   </html>
