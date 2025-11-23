@@ -43,6 +43,26 @@
             return txt.length>200;
           });
         }
+        var originalRootHTML=null;
+        function showCourseContent(title, text){
+          var root=document.getElementById('root');
+          if(!root) return;
+          if(originalRootHTML==null){ originalRootHTML=root.innerHTML; }
+          window.history.pushState({view:'course'},'', '/courses/view');
+          root.innerHTML='';
+          var wrap=document.createElement('div');
+          var h=document.createElement('h1'); h.textContent=title||'Course';
+          var back=document.createElement('button'); back.textContent='Back'; back.className='open-injected';
+          var content=document.createElement('div'); content.style.whiteSpace='pre-wrap'; content.textContent=text||'';
+          back.addEventListener('click',function(){
+            window.history.pushState({},'', '/courses');
+            root.innerHTML=originalRootHTML;
+            originalRootHTML=null;
+            setTimeout(function(){ ensureCourses(); },0);
+          });
+          wrap.appendChild(h); wrap.appendChild(back); wrap.appendChild(content);
+          root.appendChild(wrap);
+        }
         function transformCard(card){
           if(card.getAttribute('data-transformed')) return;
           var head=findHeading(card);
@@ -73,11 +93,16 @@
             btn.setAttribute('data-bound','1');
             btn.addEventListener('click',function(e){
               e.preventDefault();
-              contentDiv.style.display='';
-              btn.style.display='none';
+              showCourseContent(titleText, contentDiv.textContent||'');
             });
           }
           card.setAttribute('data-transformed','1');
+        }
+        function ensureCourses(){
+          processCourses();
+          constrainCourseUI();
+          enhanceEditors();
+          enhanceNav();
         }
         function processCourses(){
           if(!isCoursesPage()) return;
@@ -130,10 +155,10 @@
         }
         var root=document.getElementById('root');
         if(root){
-          var mo=new MutationObserver(function(){processCourses();constrainCourseUI();enhanceEditors();enhanceNav();});
+          var mo=new MutationObserver(function(){ensureCourses();});
           mo.observe(root,{childList:true,subtree:true});
         }
-        window.addEventListener('load',function(){processCourses();constrainCourseUI();enhanceEditors();enhanceNav();});
+        window.addEventListener('load',function(){ensureCourses();});
       })();
     </script>
   </body>
