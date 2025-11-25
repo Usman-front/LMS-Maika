@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getGradebook, createGradebookEntry, updateGradebookEntry } from '../services/api.js'
+import { getGradebook, createGradebookEntry, updateGradebookEntry, deleteGradebookEntry } from '../services/api.js'
 import { useAuth } from '../context/auth.js'
 
 export default function Gradebook() {
@@ -52,6 +52,15 @@ export default function Gradebook() {
                   setItems((prev) => prev.map((it) => it.id === g.id ? updated : it))
                 }}
               >Save</button>
+              {user?.role === 'admin' && (
+                <button
+                  className="rounded bg-red-600 text-white px-3"
+                  onClick={async () => {
+                    await deleteGradebookEntry(g.id)
+                    setItems((prev) => prev.filter((it) => it.id !== g.id))
+                  }}
+                >Delete</button>
+              )}
             </div>
           )}
         </div>

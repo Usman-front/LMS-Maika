@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getAnnouncements, postAnnouncement, updateAnnouncement } from '../services/api.js'
+import { getAnnouncements, postAnnouncement, updateAnnouncement, deleteAnnouncement } from '../services/api.js'
 import { useAuth } from '../context/auth.js'
 
 export default function Announcements() {
@@ -44,6 +44,15 @@ export default function Announcements() {
                   className="rounded bg-purple-600 text-white px-3 py-1"
                 >
                   Save
+                </button>
+                <button
+                  onClick={async () => {
+                    await deleteAnnouncement(a.id)
+                    setItems((prev) => prev.filter((it) => it.id !== a.id))
+                  }}
+                  className="rounded bg-red-600 text-white px-3 py-1"
+                >
+                  Delete
                 </button>
               </div>
             )}

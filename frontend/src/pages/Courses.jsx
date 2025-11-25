@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { createCourse, getCourses } from '../services/api.js'
+import { createCourse, getCourses, deleteCourse } from '../services/api.js'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/auth.js'
 
@@ -35,7 +35,18 @@ export default function Courses() {
         {courses.map((c) => (
           <li key={c.id} className="border rounded p-3 flex items-center justify-between">
             <div className="font-medium">{c.title}</div>
-            <Link to={`/courses/${c.id}`} className="text-purple-700">Open</Link>
+            <div className="flex items-center gap-3">
+              <Link to={`/courses/${c.id}`} className="text-purple-700">Open</Link>
+              {user?.role === 'admin' && (
+                <button
+                  onClick={async () => {
+                    await deleteCourse(c.id)
+                    setCourses((prev) => prev.filter((it) => it.id !== c.id))
+                  }}
+                  className="text-red-600"
+                >Delete</button>
+              )}
+            </div>
           </li>
         ))}
         {courses.length === 0 && <div className="text-sm text-gray-600">No courses yet.</div>}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { createAssignment, getAssignments } from '../services/api.js'
+import { createAssignment, getAssignments, deleteAssignment } from '../services/api.js'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/auth.js'
 
@@ -41,7 +41,18 @@ export default function Assignments() {
               <div className="font-medium">{a.title}</div>
               <div className="text-sm text-gray-600">Course #{a.courseId}</div>
             </div>
-            <Link to={`/assignments/${a.id}`} className="text-purple-700">Open</Link>
+            <div className="flex items-center gap-3">
+              <Link to={`/assignments/${a.id}`} className="text-purple-700">Open</Link>
+              {user?.role === 'admin' && (
+                <button
+                  onClick={async () => {
+                    await deleteAssignment(a.id)
+                    setItems((prev) => prev.filter((it) => it.id !== a.id))
+                  }}
+                  className="text-red-600"
+                >Delete</button>
+              )}
+            </div>
           </li>
         ))}
         {items.length === 0 && <div className="text-sm text-gray-600">No assignments yet.</div>}

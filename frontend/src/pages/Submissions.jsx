@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { getSubmissions } from '../services/api.js'
+import { getSubmissions, deleteSubmissionById } from '../services/api.js'
+import { useAuth } from '../context/auth.js'
 
 export default function Submissions() {
   const [submissions, setSubmissions] = useState([])
   const [loading, setLoading] = useState(true)
+  const { user } = useAuth()
 
   useEffect(() => {
     getSubmissions().then((data) => { setSubmissions(data); setLoading(false) }).catch(() => setLoading(false))
@@ -18,6 +20,17 @@ export default function Submissions() {
           <div className="font-medium">{s.assignmentTitle} • {s.courseTitle}</div>
           <div className="text-sm text-gray-600">{s.studentEmail}</div>
           <div className="mt-2 text-sm">{s.text || '—'}</div>
+          {user?.role === 'admin' && (
+            <div className="mt-2">
+              <button
+                onClick={async () => {
+                  await deleteSubmissionById(s.id)
+                  setSubmissions((prev) => prev.filter((it) => it.id !== s.id))
+                }}
+                className="rounded bg-red-600 text-white px-3 py-1"
+              >Delete</button>
+            </div>
+          )}
         </div>
       ))}
       {submissions.length === 0 && <div className="text-sm text-gray-600">No submissions yet.</div>}

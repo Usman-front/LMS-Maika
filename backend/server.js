@@ -198,6 +198,13 @@ app.get('/submissions', authRequired, async (req, res) => {
   return res.json(submissions)
 })
 
+app.delete('/submissions/:id', authRequired, async (req, res) => {
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' })
+  const removed = await Submission.findOneAndDelete({ id: Number(req.params.id) }).lean()
+  if (!removed) return res.status(404).json({ error: 'Not found' })
+  return res.json(removed)
+})
+
 app.get('/announcements', authRequired, async (req, res) => {
   const announcements = await Announcement.find().lean()
   res.json(announcements)

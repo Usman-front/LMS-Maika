@@ -24,6 +24,8 @@ export const updateCourse = (id, payload) =>
   jsonFetch(`/courses/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
 export const createCourse = (payload) =>
   jsonFetch('/courses', { method: 'POST', body: JSON.stringify(payload) })
+export const deleteCourse = (id) =>
+  jsonFetch(`/courses/${id}`, { method: 'DELETE' })
 export const getAssignments = () => jsonFetch('/assignments')
 export const getAssignmentById = (id) => jsonFetch(`/assignments/${id}`)
 export const createAssignment = (payload) =>
@@ -33,6 +35,8 @@ export const submitAssignment = (id, payload) =>
 export const getMySubmission = (id) => jsonFetch(`/assignments/${id}/submission/me`)
 export const updateAssignment = (id, payload) =>
   jsonFetch(`/assignments/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
+export const deleteAssignment = (id) =>
+  jsonFetch(`/assignments/${id}`, { method: 'DELETE' })
 export const getSubmissions = (params = {}) => {
   const qs = new URLSearchParams()
   if (params.assignmentId) qs.set('assignmentId', params.assignmentId)
@@ -45,11 +49,15 @@ export const postAnnouncement = (payload) =>
   jsonFetch('/announcements', { method: 'POST', body: JSON.stringify(payload) })
 export const updateAnnouncement = (id, payload) =>
   jsonFetch(`/announcements/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
+export const deleteAnnouncement = (id) =>
+  jsonFetch(`/announcements/${id}`, { method: 'DELETE' })
 export const getGradebook = () => jsonFetch('/gradebook')
 export const createGradebookEntry = (payload) =>
   jsonFetch('/gradebook', { method: 'POST', body: JSON.stringify(payload) })
 export const updateGradebookEntry = (id, payload) =>
   jsonFetch(`/gradebook/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
+export const deleteGradebookEntry = (id) =>
+  jsonFetch(`/gradebook/${id}`, { method: 'DELETE' })
 
 export const getStudents = () => jsonFetch('/students')
 
@@ -57,5 +65,8 @@ export const authLogin = ({ email, password }) =>
   jsonFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) })
 export const authRegister = ({ email, password, role }) =>
   jsonFetch('/auth/register', { method: 'POST', body: JSON.stringify({ email, password, role }) })
+
+export const deleteSubmissionById = (id) =>
+  jsonFetch(`/submissions/${id}`, { method: 'DELETE' })
 
 export { BASE_URL }
