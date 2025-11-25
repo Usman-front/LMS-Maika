@@ -26,7 +26,7 @@ export default function Courses() {
   return (
     <div className="space-y-4">
       {user?.role === 'admin' && (
-        <form onSubmit={addCourse} className="flex gap-2">
+        <form onSubmit={addCourse} className="flex gap-2 pt-1">
           <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="New course title" className="flex-1 border rounded p-2" />
           <button className="rounded bg-purple-600 text-white px-3">Add</button>
         </form>
