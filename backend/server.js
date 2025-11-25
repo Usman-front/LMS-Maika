@@ -74,7 +74,7 @@ app.get('/courses/:id', authRequired, async (req, res) => {
 })
 
 app.post('/courses', authRequired, async (req, res) => {
-  if (!['teacher', 'admin'].includes(req.user.role)) return res.status(403).json({ error: 'Forbidden' })
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' })
   const { title, description, overview, resources } = req.body || {}
   if (!title) return res.status(400).json({ error: 'Title required' })
   const id = await nextId('courses')
@@ -83,7 +83,7 @@ app.post('/courses', authRequired, async (req, res) => {
 })
 
 app.put('/courses/:id', authRequired, async (req, res) => {
-  if (!['teacher', 'admin'].includes(req.user.role)) return res.status(403).json({ error: 'Forbidden' })
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' })
   const { title, description, overview, resources } = req.body || {}
   const updated = await Course.findOneAndUpdate(
     { id: Number(req.params.id) },
@@ -121,7 +121,7 @@ app.get('/assignments/:id', authRequired, async (req, res) => {
 })
 
 app.post('/assignments', authRequired, async (req, res) => {
-  if (!['teacher', 'admin'].includes(req.user.role)) return res.status(403).json({ error: 'Forbidden' })
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' })
   const { title, due, courseId, description } = req.body || {}
   if (!title || !courseId) return res.status(400).json({ error: 'Title and courseId required' })
   const id = await nextId('assignments')
@@ -130,7 +130,7 @@ app.post('/assignments', authRequired, async (req, res) => {
 })
 
 app.put('/assignments/:id', authRequired, async (req, res) => {
-  if (!['teacher', 'admin'].includes(req.user.role)) return res.status(403).json({ error: 'Forbidden' })
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' })
   const { title, due, courseId, description } = req.body || {}
   const updated = await Assignment.findOneAndUpdate(
     { id: Number(req.params.id) },
@@ -204,7 +204,7 @@ app.get('/announcements', authRequired, async (req, res) => {
 })
 
 app.post('/announcements', authRequired, async (req, res) => {
-  if (!['teacher', 'admin'].includes(req.user.role)) return res.status(403).json({ error: 'Forbidden' })
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' })
   const { title, body } = req.body || {}
   if (!title) return res.status(400).json({ error: 'Title required' })
   const id = await nextId('announcements')
@@ -213,7 +213,7 @@ app.post('/announcements', authRequired, async (req, res) => {
 })
 
 app.put('/announcements/:id', authRequired, async (req, res) => {
-  if (!['teacher', 'admin'].includes(req.user.role)) return res.status(403).json({ error: 'Forbidden' })
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' })
   const { title, body } = req.body || {}
   const updated = await Announcement.findOneAndUpdate(
     { id: Number(req.params.id) },
@@ -240,7 +240,7 @@ app.get('/gradebook', authRequired, async (req, res) => {
 })
 
 app.post('/gradebook', authRequired, async (req, res) => {
-  if (!['teacher', 'admin'].includes(req.user.role)) return res.status(403).json({ error: 'Forbidden' })
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' })
   const { course, assignment, grade, feedback, studentEmail } = req.body || {}
   if (!course || !assignment || !studentEmail) return res.status(400).json({ error: 'course, assignment, studentEmail required' })
   const id = await nextId('gradebook')
@@ -249,7 +249,7 @@ app.post('/gradebook', authRequired, async (req, res) => {
 })
 
 app.put('/gradebook/:id', authRequired, async (req, res) => {
-  if (!['teacher', 'admin'].includes(req.user.role)) return res.status(403).json({ error: 'Forbidden' })
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' })
   const { course, assignment, grade, feedback, studentEmail } = req.body || {}
   const updated = await Gradebook.findOneAndUpdate(
     { id: Number(req.params.id) },

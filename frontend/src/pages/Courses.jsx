@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { createCourse, getCourses } from '../services/api.js'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../context/auth.js'
 
 export default function Courses() {
   const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
   const [title, setTitle] = useState('')
+  const { user } = useAuth()
 
   useEffect(() => {
     getCourses().then((data) => { setCourses(data); setLoading(false) }).catch(() => setLoading(false))
@@ -23,10 +25,12 @@ export default function Courses() {
 
   return (
     <div className="space-y-4">
-      <form onSubmit={addCourse} className="flex gap-2">
-        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="New course title" className="flex-1 border rounded p-2" />
-        <button className="rounded bg-purple-600 text-white px-3">Add</button>
-      </form>
+      {user?.role === 'admin' && (
+        <form onSubmit={addCourse} className="flex gap-2">
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="New course title" className="flex-1 border rounded p-2" />
+          <button className="rounded bg-purple-600 text-white px-3">Add</button>
+        </form>
+      )}
       <ul className="space-y-2">
         {courses.map((c) => (
           <li key={c.id} className="border rounded p-3 flex items-center justify-between">

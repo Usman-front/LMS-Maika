@@ -31,6 +31,8 @@ export const createAssignment = (payload) =>
 export const submitAssignment = (id, payload) =>
   jsonFetch(`/assignments/${id}/submit`, { method: 'POST', body: JSON.stringify(payload) })
 export const getMySubmission = (id) => jsonFetch(`/assignments/${id}/submission/me`)
+export const updateAssignment = (id, payload) =>
+  jsonFetch(`/assignments/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
 export const getSubmissions = (params = {}) => {
   const qs = new URLSearchParams()
   if (params.assignmentId) qs.set('assignmentId', params.assignmentId)
