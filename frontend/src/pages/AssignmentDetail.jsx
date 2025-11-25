@@ -29,14 +29,14 @@ export default function AssignmentDetail() {
   return (
     <div className="space-y-4">
       <div className="text-xl font-semibold text-center">{assignment.title}</div>
-      {user?.role === 'admin' && (
+      {(user?.role === 'admin' || user?.role === 'teacher') && (
         <div className="flex justify-end">
           <button onClick={() => setEditing((e) => !e)} className="rounded bg-purple-600 text-white px-3 py-1">
             {editing ? 'Cancel' : 'Edit'}
           </button>
         </div>
       )}
-      {editing && user?.role === 'admin' ? (
+      {editing && (user?.role === 'admin' || user?.role === 'teacher') ? (
         <div className="space-y-3">
           <input value={assignment.title} onChange={(e) => setAssignment({ ...assignment, title: e.target.value })} className="w-full border rounded p-2" />
           <textarea value={assignment.description || ''} onChange={(e) => setAssignment({ ...assignment, description: e.target.value })} className="w-full border rounded p-2" rows={6} />

@@ -16,7 +16,7 @@ export default function Gradebook() {
 
   return (
     <div className="space-y-3">
-      {user?.role === 'admin' && (
+      {(user?.role === 'admin' || user?.role === 'teacher') && (
         <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 border rounded p-3">
           <input value={form.course} onChange={(e) => setForm({ ...form, course: e.target.value })} placeholder="Course" className="border rounded p-2" />
           <input value={form.assignment} onChange={(e) => setForm({ ...form, assignment: e.target.value })} placeholder="Assignment" className="border rounded p-2" />
@@ -41,7 +41,7 @@ export default function Gradebook() {
           <div className="text-sm text-gray-600">{g.studentEmail}</div>
           <div className="mt-2 text-sm">Grade: {g.grade ?? '—'}</div>
           {g.feedback && <div className="mt-1 text-sm text-gray-700">{g.feedback}</div>}
-          {user?.role === 'admin' && (
+          {(user?.role === 'admin' || user?.role === 'teacher') && (
             <div className="mt-2 grid grid-cols-1 sm:grid-cols-4 gap-2">
               <input value={g.grade ?? ''} onChange={(e) => setItems((prev) => prev.map((it) => it.id === g.id ? { ...it, grade: e.target.value } : it))} placeholder="Grade" className="border rounded p-2" />
               <textarea value={g.feedback || ''} onChange={(e) => setItems((prev) => prev.map((it) => it.id === g.id ? { ...it, feedback: e.target.value } : it))} className="sm:col-span-2 border rounded p-2" rows={2} />

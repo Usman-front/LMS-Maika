@@ -27,7 +27,7 @@ export default function Assignments() {
 
   return (
     <div className="space-y-4">
-      {user?.role === 'admin' && (
+      {(user?.role === 'admin' || user?.role === 'teacher') && (
         <form onSubmit={add} className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Assignment title" className="border rounded p-2" />
           <input value={courseId} onChange={(e) => setCourseId(e.target.value)} placeholder="Course ID" className="border rounded p-2" />
