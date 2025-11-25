@@ -30,10 +30,7 @@ export default function Courses() {
       <ul className="space-y-2">
         {courses.map((c) => (
           <li key={c.id} className="border rounded p-3 flex items-center justify-between">
-            <div>
-              <div className="font-medium">{c.title}</div>
-              {c.description && <div className="text-sm text-gray-600">{c.description}</div>}
-            </div>
+            <div className="font-medium">{c.title}</div>
             <Link to={`/courses/${c.id}`} className="text-purple-700">Open</Link>
           </li>
         ))}

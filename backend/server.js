@@ -275,6 +275,22 @@ app.delete('/gradebook/:id', authRequired, async (req, res) => {
 
 connectDB()
   .then(() => {
+    (async () => {
+      try {
+        const existingAdmin = await User.findOne({ role: 'admin' }).lean()
+        if (!existingAdmin) {
+          const email = process.env.ADMIN_EMAIL || 'admin@smartlearn.local'
+          const password = process.env.ADMIN_PASSWORD || 'admin123'
+          const found = await User.findOne({ email }).lean()
+          if (!found) {
+            await User.create({ email, password, role: 'admin' })
+            console.log(`Seeded default admin: ${email}`)
+          }
+        }
+      } catch (e) {
+        console.error('Admin bootstrap failed', e)
+      }
+    })()
     app.listen(PORT, () => {
       console.log(`SmartLearn backend running at http://localhost:${PORT}/`)
     })
